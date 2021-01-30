@@ -25,11 +25,7 @@ export const Comments: React.FC<Props> = (props) => {
     })
 
     useEffect(() => {
-        setComment(message)
-    }, [])
-
-    useEffect(() => {
-        setComment(storeData)
+        storeData.length ? setComment(storeData) : setComment(message)
     }, [storeData])
 
     return (

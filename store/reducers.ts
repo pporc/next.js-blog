@@ -38,7 +38,7 @@ const rootReducer = (state = initialState, { type, payload }) => {
         case DELETEPOST:
             const newArray = state.posts.filter((val) => val.id !== payload)
 
-            return { ...state, posts: [newArray] }
+            return { ...state, posts: newArray }
         case CREATE_POST:
             const posts = [...state.posts]
             posts.push(payload)

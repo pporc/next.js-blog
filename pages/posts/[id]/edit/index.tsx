@@ -2,33 +2,40 @@ import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/dist/client/router'
 import { ChangeEvent, useEffect, useState } from 'react'
+import { NextPage } from 'next'
 import { MainLayout } from '../../../../components/MainLayout'
 import { Input, TextArea, Button } from '../../../../styles/styled'
 import { changePost, getPost } from '../../../../store/actions'
+import { PostState } from '../../../../store/reducers'
 
-const Edit = () => {
+const Edit: NextPage = () => {
     const router = useRouter()
     const dispatch = useDispatch()
 
+    const [id, setId] = useState(null)
     const [title, setTitle] = useState('')
     const [body, setBody] = useState('')
 
-    const post = useSelector((state: any) => {
-        if (!state.posts) {
+    useEffect(() => {
+        setId(Number(router.query.id))
+    }, [router])
+
+    const post = useSelector((state: PostState) => {
+        if (!state.posts || !id) {
             return null
         } else {
-            return state.posts.find((val) => val.id == router.query.id)
+            return state.posts.find((val) => val.id === id)
         }
     })
 
     useEffect(() => {
-        if (post === undefined) {
-            dispatch(getPost(Number(router.query.id)))
-        } else {
+        if (!post && id) {
+            dispatch(getPost(id))
+        } else if (post) {
             setTitle(post.title)
             setBody(post.body)
         }
-    }, [dispatch])
+    }, [post, id])
 
     const inputHandler = (e: ChangeEvent<HTMLInputElement>): void => {
         setTitle(e.target.value)
@@ -40,8 +47,8 @@ const Edit = () => {
 
     const saveHandler = (): void => {
         const data = { title, body }
-        dispatch(changePost(data, Number(router.query.id)))
-        router.push(`/posts/${Number(router.query.id)}`)
+        dispatch(changePost(data, id, post))
+        router.push(`/posts/${id}`)
     }
 
     return (

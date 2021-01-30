@@ -42,13 +42,16 @@ export const createPost = (data: ReqPostData) => async (dispatch) => {
     })
 }
 
-export const changePost = (data: ReqPostData, id: number) => async (
-    dispatch
-) => {
+export const changePost = (
+    data: ReqPostData,
+    id: number,
+    post: ResPostData
+) => async (dispatch) => {
     await blogAPI.changePost(data, id).then((val) => {
+        const newData = { ...val, comments: post.comments }
         dispatch({
             type: CHANGE_POST,
-            payload: val,
+            payload: newData,
         })
     })
 }
